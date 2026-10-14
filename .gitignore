@@ -1,0 +1,9 @@
+/artifacts/
+/backups/
+*.tar.gz
+*.tar.gz.sha256
+*.zip
+*.log
+__pycache__/
+*.pyc
+.env

@@ -1,0 +1,10 @@
+[Unit]
+Description=Update Minecraft Bedrock Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/update-minecraft-bedrock
+Nice=10
+IOSchedulingClass=idle

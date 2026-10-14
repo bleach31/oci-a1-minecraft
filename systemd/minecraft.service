@@ -1,0 +1,29 @@
+[Unit]
+Description=Minecraft Bedrock Server via Box64
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=minecraft
+Group=minecraft
+WorkingDirectory=/opt/minecraft/server
+Environment=LD_LIBRARY_PATH=.
+Environment=BOX64_DYNAREC=1
+Environment=BOX64_DYNACACHE_FOLDER=/var/cache/minecraft-box64
+ExecStart=/usr/local/bin/box64 /opt/minecraft/server/bedrock_server
+Restart=on-failure
+RestartSec=10s
+TimeoutStopSec=90s
+KillSignal=SIGINT
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/minecraft/server /var/cache/minecraft-box64
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
