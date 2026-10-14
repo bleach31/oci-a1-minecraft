@@ -10,7 +10,6 @@ while IFS= read -r script; do
 done < <(find "${repo_root}/scripts" "${repo_root}/tests" -maxdepth 1 \
   -type f -name '*.sh' -print | sort)
 
-python3 -m py_compile "${repo_root}/tests/bedrock_ping.py"
 python3 -m py_compile "${repo_root}/monitor/monitor.py"
 PUBLIC_IP=203.0.113.10 SERVER_NAME='Public Test Server' \
   "${repo_root}/scripts/render-server-properties.sh" \

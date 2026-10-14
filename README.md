@@ -1,28 +1,24 @@
 # Minecraft Bedrock on OCI A1
 
 OCI Ampere A1 (`aarch64`) で公式 Minecraft Bedrock Dedicated Server の
-x86_64 バイナリを Box64 経由で運用し、既存GCPサーバーからワールドを移行するための
-構成管理リポジトリです。
+x86_64 バイナリをBox64経由で構築・運用するための構成管理リポジトリです。
 
 ## 方針
 
 - Minecraft本体は公式BDSを使用し、Box64のARM64 DynaRecで実行する
 - 初期構築用のBox64とBDSを `config/versions.env` で固定する
 - 稼働後のBDSは日次timerで公式最新版へ安全に追従する
-- ワールド形式は変換せず、停止中に取得したバックアップを移送する
-- systemd、バックアップ、検証処理はARM64ネイティブで動かす
-- 移行完了までGCP側をロールバック先として保持する
+- systemd、監視、検証処理はARM64ネイティブで動かす
 
-設計判断は [docs/architecture.md](docs/architecture.md)、実際の移行手順は
-[docs/migration-runbook.md](docs/migration-runbook.md) を参照してください。
+設計判断は [docs/architecture.md](docs/architecture.md) を参照してください。
 
 ## 構成
 
 ```text
 config/                 公開可能な標準設定とnginxテンプレート
-docs/                   設計と移行手順
+docs/                   設計資料
 monitor/                監視APIとWeb UI
-scripts/                導入、更新、バックアップ、復元
+scripts/                導入、更新
 systemd/                Minecraftサービス定義
 tests/                  unit test、構文検査、実機smoke test
 ```
@@ -37,7 +33,6 @@ tests/                  unit test、構文検査、実機smoke test
 | --- | --- |
 | Box64、BDS、systemdの初期導入 | `scripts/install-box64.sh`、`install-bedrock.sh`、`install-service.sh` |
 | 監視画面とHTTPSの導入 | `scripts/install-monitor.sh`、`enable-monitor-domain.sh` |
-| 移行元のバックアップと移行先への復元 | `scripts/source-backup.sh`、`restore-backup.sh` |
 | BDSの安全な更新 | `scripts/update-bedrock.sh`（systemdから実行） |
 | unit testと構文検査 | `tests/check.sh` |
 | 稼働中BDSのsmoke test | `tests/smoke-test.sh` |
@@ -117,14 +112,6 @@ sudo ./scripts/enable-monitor-domain.sh example.duckdns.org
 ```
 
 実サーバーの設定、ワールド、バックアップ、秘密情報はGitに含めません。
-
-## 参照実装
-
-現行GCPサーバーの構成は
-[bleach31/mini-mc-server](https://github.com/bleach31/mini-mc-server) を基準にしています。
-最新版の検出、公式BDS URLの抽出、ワールドと設定の保持という更新方針を継承し、
-このリポジトリではA1/Box64向けの配置、systemd timer、SHA-256記録、起動失敗時の
-自動ロールバックを追加しています。
 
 ## ライセンス
 

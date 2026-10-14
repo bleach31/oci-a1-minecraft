@@ -2,8 +2,8 @@
 
 ## 目的
 
-GCP e2-micro上のMinecraft Bedrock Dedicated ServerをOCI Ampere A1へ移し、
-PCやSwitchなどのBedrockクライアントから継続して利用できるようにします。
+OCI Ampere A1上でMinecraft Bedrock Dedicated Serverを構築し、PCやSwitchなどの
+Bedrockクライアントから利用できるようにします。
 
 ## 採用構成
 
@@ -19,7 +19,7 @@ systemd -> Box64 ARM64 DynaRec -> official BDS x86_64 -> Bedrock world
 ```
 
 公式Linux BDSはARM64バイナリを提供していないため、BDSプロセスだけをBox64で
-実行します。ワールド、systemd、バックアップ、疎通確認はエミュレーションに
+実行します。systemd、監視、疎通確認はエミュレーションに
 依存しません。
 
 ## この方式を選ぶ理由
@@ -81,12 +81,6 @@ Switchから任意サーバーへ接続する方法はクライアント側の�
 SQLiteへ保存します。journal側で対象行を絞り、初回同期がMinecraft本体を圧迫しない
 ようにします。Web APIはlocalhost限定で、外部公開、TLS、Basic認証はnginxが担当します。
 ntfy送信は別スレッドで行い、通知先障害が収集とWeb応答を止めない構成です。
-
-## ロールバック
-
-移行後にPCとSwitchから接続し、ワールド、持ち物、権限を確認するまではGCP VMを
-削除しません。問題があればOCI側を停止し、GCP側を再起動します。同一ワールドを
-両方で同時起動しないことが重要です。
 
 ## 運用監視
 
